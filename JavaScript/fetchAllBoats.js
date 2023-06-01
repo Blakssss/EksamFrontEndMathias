@@ -19,6 +19,7 @@ function fillRowsInTable(sailboat) {
         <td>${sailboat.name}</td>
         <td>${sailboat.type}</td>
         <td>${sailboat.point}</td>
+        <td>${sailboat.listOfRaceSeason}</td>
         <td><button class="btn btn-primary" id="updateSailboatKnap-${sailboat.id}" value="${sailboat.id}" data-bs-toggle="modal" data-bs-target="#updateSailboatModal">Update</button></td>
         <td><button class="btn btn-primary" id="deleteSailboatKnap-${sailboat.id}" value="${sailboat.id}">Delete</button></td>
         `;
@@ -45,34 +46,30 @@ function updateSailboat(){
     const updateModalForm = document.querySelector("#modalFormUpdateSailboat")
     const SailboatObjekt = preparePlainFormData(updateModalForm) // vi laver alt input fra formen om til et javascript objekt.
     const SailboatId = document.querySelector("#updateIdFormHiddenInput").value; // Vi skaffer Sailboaten id fra det hidden form input felt.
-    SailboatObjekt.id = SailboatId; // Vi sætter vores SailboatObjekts id til at være lig dette id vi hentede fra hidden input feltet,
+    SailboatObjekt.id = SailboatId; // Vi sætter vores SailboatObjekt id til at være lig dette id vi hentede fra hidden input feltet,
 
-    // Nu har vi de informationer vi skal bruge for at PUT vores Sailboat. Vi indtaster url + fetchmetode + objekt vi gerne vil update.
     fetchAny("sailboat", "PUT", SailboatObjekt).then(Sailboat => {
-        console.log("Updated Sailboat: ", Sailboat) // hvis det lykkedes log'er vi Sailboaten.
+        console.log("Updated Sailboat: ", Sailboat)
         alert("Updated Sailboat: " + SailboatObjekt.name)
         window.location.reload()
     }).catch(error => {
-        console.error(error) // hvis det fejler log'er vi error.
+        console.error(error)
     })
 }
 
 
-// Den her eventlistener kalder så metoden der laver Sailboaten når man trykker på modal knappen "create Sailboate".
 document.querySelector("#createSailboatModalBtn").addEventListener('click', createSailboat)
 
 // Function der skaffer vores form data og laver den om til et javascript objekt, og så poster det til backend.
 function createSailboat(){
     const createModalForm = document.querySelector("#modalFormCreateSailboat")
     const SailboatObjekt = preparePlainFormData(createModalForm) // vi laver alt input fra formen om til et javascript objekt.
-
-    // url + fetchmetode + objekt vi gerne vil update
     fetchAny("sailboat", "POST", SailboatObjekt).then(Sailboat => {
         alert("Created Sailboat: " + SailboatObjekt.id)
         console.log("Created Sailboat: ", Sailboat) // hvis det lykkedes log'er vi Sailboaten.
         window.location.reload()
     }).catch(error => {
-        console.error(error) // hvis det fejler log'er vi error.
+        console.error(error)
     })
 
 }
@@ -88,12 +85,7 @@ function deleteSailboat(event) {
     fetchAny(`sailboat/${sailboatId}`, "DELETE", null).then(sailboat => {
         alert(`Sailboat med id: ${sailboatId} og navn: ${sailboat.name} er blevet slettet`);
         console.log(sailboat.name);
-
-        // Her bruger vi det unikke id hver table row har, til at få fat i vores row, og derefter slette det fra table body delen. På den måde er vores liste stadig sortet efter vi deleter elementer.
-       // const rowToDelete = document.querySelector(`#SailboatRow-${sailboatId}`)
         window.location.reload()
-        //tableBodyBoats.removeChild(rowToDelete);
-
     }).catch(error => {
         console.error(error)
 
@@ -143,14 +135,9 @@ function sortBoatsByPoints() {
 // Denne metode laver et form element om til et javascript objekt vi kalder plainFormData.
 function preparePlainFormData(form) {
     console.log("Received the Form:", form)
-    const formData = new FormData(form)  // indbygget metode, behøves ikke forstås.
+    const formData = new FormData(form)
     console.log("Made the form in to FormData:", formData)
     const plainFormData = Object.fromEntries(formData.entries())
     console.log("Changes and returns the FormData as PlainFormData:", plainFormData)
     return plainFormData
 }
-
-// Når vi trykker på dropDown knappen i vores UpdateModel så køre fillUpdateDropDown og fylder den med partier
-//document.querySelector("#dropDownButtonUpdate").addEventListener("click", fillUpdateDropDown)
-
-

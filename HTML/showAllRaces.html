@@ -37,10 +37,11 @@
                 <th scope="col"></th>
             </tr>
             </thead>
+            <tbody id="tblBodySailRace">
+
         </table>
 
 
-        <!-- MODAL TIL UPDATE -->
         <div class="modal fade" id="updateSailRaceModal" tabindex="-1" aria-labelledby="updateSailRaceModalTitle" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -51,7 +52,6 @@
                     <div class="modal-body">
                         <form id="modalFormUpdateSailRace">
                             <div class="mb-3">
-                                <!-- Her har vi et hidden input field vi bruger til at gemme en SailRaces id i, så når vi poster vores form så får den id'et med-->
                                 <input name="id" type="hidden" class="form-control" id="updateIdFormHiddenInput">
                             </div>
                             <div class="mb-3">
@@ -70,7 +70,6 @@
             </div>
         </div>
 
-        <!-- MODAL TIL CREATE -->
         <div class="modal fade" id="createSailRaceModal" tabindex="-1" aria-labelledby="createSailRaceModalTitle" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

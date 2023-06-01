@@ -26,6 +26,8 @@ function fillRowsInTable(sailRace) {
     // Vi appender én row ad gangen vi laver til vores tableBodyRaces.
     tableBodyRaces.appendChild(tableRow);
 
+    document.querySelector("#updateSailRaceModalBtn").addEventListener("click", updateSailRace)
+
     // Vi laver en eventlistener på hver update knap der kalder addHiddenIdToInputField metoden, som adder sailRace id til et hidden form input felt
     document.querySelector(`#updateSailRaceKnap-${sailRace.id}`).addEventListener('click', addHiddenIdToInputField)
 
@@ -39,7 +41,6 @@ function addHiddenIdToInputField(event){
     document.querySelector("#updateIdFormHiddenInput").value = SailRaceId; // man kunne honestly også bare have gemt vores event.target.value i en global variabel her, i stedet for i et hidden field. Nok nemmere.
 }
 
-document.querySelector("#updateSailRaceModalBtn").addEventListener('click', updateSailRace)
 
 function updateSailRace(){
     const updateModalForm = document.querySelector("#modalFormUpdateSailRace")
@@ -47,52 +48,39 @@ function updateSailRace(){
     const SailRaceId = document.querySelector("#updateIdFormHiddenInput").value; // Vi skaffer SailRaceen id fra det hidden form input felt.
     SailRaceObjekt.id = SailRaceId; // Vi sætter vores SailRaceObjekts id til at være lig dette id vi hentede fra hidden input feltet,
 
-    // Nu har vi de informationer vi skal bruge for at PUT vores SailRace. Vi indtaster url + fetchmetode + objekt vi gerne vil update.
     fetchAny("sailrace", "PUT", SailRaceObjekt).then(SailRace => {
-        console.log("Updated SailRace: ", SailRace) // hvis det lykkedes log'er vi SailRaceen.
+        console.log("Updated SailRace: ", SailRace)
         alert("Updated SailRace: " + SailRaceObjekt.name)
         window.location.reload()
     }).catch(error => {
-        console.error(error) // hvis det fejler log'er vi error.
+        console.error(error)
     })
 }
 
 
-// Den her eventlistener kalder så metoden der laver SailRaceen når man trykker på modal knappen "create SailRacee".
+// Den her eventlistener kalder så metoden der laver SailRace når man trykker på modal knappen "create SailRace".
 document.querySelector("#createSailRaceModalBtn").addEventListener('click', createSailRace)
 
 // Function der skaffer vores form data og laver den om til et javascript objekt, og så poster det til backend.
 function createSailRace(){
     const createModalForm = document.querySelector("#modalFormCreateSailRace")
     const SailRaceObjekt = preparePlainFormData(createModalForm) // vi laver alt input fra formen om til et javascript objekt.
-
-    // url + fetchmetode + objekt vi gerne vil update
     fetchAny("sailrace", "POST", SailRaceObjekt).then(SailRace => {
         alert("Created SailRace: " + SailRaceObjekt.id)
-        console.log("Created SailRace: ", SailRace) // hvis det lykkedes log'er vi SailRaceen.
+        console.log("Created SailRace: ", SailRace)
         window.location.reload()
     }).catch(error => {
-        console.error(error) // hvis det fejler log'er vi error.
+        console.error(error)
     })
 
 }
-
-
-// Metoder der får fat i dropdown menuen i modallen, og sætter alle partierne ind som valgmulighederne, ved at fetche dem fra backend og lave et liste element med hver af dem.
-
-
-document.querySelector("#updateSailRaceModalBtn").addEventListener("click", updateSailRace)
 
 function deleteSailRace(event) {
     const sailRaceId = event.target.value
     fetchAny(`sailrace/${sailRaceId}`, "DELETE", null).then(sailRace => {
         alert(`SailRace med id: ${sailRaceId} og navn: ${sailRace.name} er blevet slettet`);
         console.log(sailRace.name);
-
-        // Her bruger vi det unikke id hver table row har, til at få fat i vores row, og derefter slette det fra table body delen. På den måde er vores liste stadig sortet efter vi deleter elementer.
-        // const rowToDelete = document.querySelector(`#SailRaceRow-${sailRaceId}`)
         window.location.reload()
-        //tableBodyRaces.removeChild(rowToDelete);
 
     }).catch(error => {
         console.error(error)
@@ -104,16 +92,12 @@ function deleteSailRace(event) {
 function fetchAllRaces() {
     fetchAny("sailraces", "GET", null).then(sailRace => {
         console.log(sailRace)
-        // Vi fetcher SailRaces og hvis det er en success .then:
-        sailRace.forEach(sailRace => { // For hver sailRace i vores liste af sailRace gør vi følgende
-            fillRowsInTable(sailRace)
-        })
-    }).catch(error => { // hvis vi får en error, catcher vi den og gør følgende:
+        sailRace.forEach(sailRace => {
+            fillRowsInTable(sailRace)})}).catch(error => {
         console.error(error);
     })
 }
-
-function sortRacesByDate() {
+function sortRacesByDate() { //FUNKTION DER SKULLE SORTERE MED DATOER, MEN NÅEDE IKKE AT REGNE UD HVORDAN
     const tableBodyRaces = document.querySelector("#tblBodyRaces")
 
     // Retrieve the table rows as an array
@@ -143,14 +127,10 @@ function sortRacesByDate() {
 // Denne metode laver et form element om til et javascript objekt vi kalder plainFormData.
 function preparePlainFormData(form) {
     console.log("Received the Form:", form)
-    const formData = new FormData(form)  // indbygget metode, behøves ikke forstås.
+    const formData = new FormData(form)
     console.log("Made the form in to FormData:", formData)
     const plainFormData = Object.fromEntries(formData.entries())
     console.log("Changes and returns the FormData as PlainFormData:", plainFormData)
     return plainFormData
 }
-
-// Når vi trykker på dropDown knappen i vores UpdateModel så køre fillUpdateDropDown og fylder den med partier
-//document.querySelector("#dropDownButtonUpdate").addEventListener("click", fillUpdateDropDown)
-
 
